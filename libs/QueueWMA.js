@@ -1,0 +1,1 @@
+// https://zh.wikipedia.org/wiki/移動平均

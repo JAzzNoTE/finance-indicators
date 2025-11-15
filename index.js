@@ -93,7 +93,7 @@ const proto = {
 function factory(type, timeRange, preItems) {
   function Constructor(timeRange, preItems) {
     this.type = type;
-    // Should be applied after specify this.type
+    // Should be applied after specifying this.type
     Indicator.apply(this, arguments);
   }
 

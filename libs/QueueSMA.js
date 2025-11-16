@@ -44,8 +44,5 @@ function QueueSMA(length, /*optional*/preItems) {
 }
 
 Queue.extend(QueueSMA, proto);
-QueueSMA.extend = Queue.extend;
-QueueSMA.removeEmpty = Queue.removeEmpty;
-QueueSMA.roundTo = Queue.roundTo;
 
 module.exports = QueueSMA;

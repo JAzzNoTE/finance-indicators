@@ -32,8 +32,5 @@ function QueueVMA(length, /*optional*/preItems) {
 }
 
 Queue.extend(QueueVMA, proto);
-QueueVMA.extend = Queue.extend;
-QueueVMA.removeEmpty = Queue.removeEmpty;
-QueueVMA.roundTo = Queue.roundTo;
 
 module.exports = QueueVMA;

@@ -42,7 +42,7 @@ function getFirstRSI(fieldName, dataSetSub) {
 
 function calcuRSI(uWMA, dWMA) { return roundTo(uWMA * 100 / (uWMA + dWMA), 2); }
 
-var proto = {
+const proto = {
   /**
    * https://www.moneydj.com/KMDJ/wiki/wikiViewer.aspx?keyid=1342fb37-760e-48b0-9f27-65674f6344c9
    * https://zh.wikipedia.org/wiki/相對強弱指數
@@ -176,8 +176,5 @@ function QueueRSI(timeRange, /*optional*/preItems) {
 }
 
 Queue.extend(QueueRSI, proto);
-QueueRSI.extend = Queue.extend;
-QueueRSI.removeEmpty = Queue.removeEmpty;
-QueueRSI.roundTo = Queue.roundTo;
 
 module.exports = QueueRSI;

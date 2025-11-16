@@ -80,6 +80,4 @@ function QueueMovingOdds(length, /*optional*/preItems) {
 }
 
 Queue.extend(QueueMovingOdds, proto);
-QueueMovingOdds.removeEmpty = Queue.removeEmpty;
-
 module.exports = QueueMovingOdds;

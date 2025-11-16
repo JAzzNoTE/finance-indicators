@@ -1,9 +1,6 @@
-const util = require('./util.js');
-
 const Queue = require('./Queue.js');
 const QueueSMA = require('./QueueSMA.js');
 
-const roundTo = util.roundTo;
 // Times of Standard Deviation
 const N = 2;
 
@@ -58,9 +55,9 @@ const proto = {
     let low = sma - N * sd;
 
     curDoc[fieldName] = {
-      sd: roundTo(sd, 2),
-      high: roundTo(high, 2),
-      low: roundTo(low, 2),
+      sd: Queue.roundTo(sd, 2),
+      high: Queue.roundTo(high, 2),
+      low: Queue.roundTo(low, 2),
       // %b = (收盤價−布林帶下軌值) ÷ (布林帶上軌值−布林帶下軌值)
       percentageB: (curDoc.close - low) / (high - low),
       bandwidth: (high - low) / sma

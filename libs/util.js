@@ -48,7 +48,7 @@ function roundTo(floatNum, precision) {
 
 /**
  * Get an ordered list of time series from object or array
- * @param {Object | Object[]} dataSet
+ * @param {Object|Object[]} dataSet
  * @param {number} dataSet[].time
  * @param {number} dataSet[].close
  */

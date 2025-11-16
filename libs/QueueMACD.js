@@ -1,8 +1,5 @@
-const util = require('./util.js');
 const Queue = require('./Queue.js');
 const QueueEMA = require('./QueueEMA.js');
-
-const roundTo = util.roundTo;
 
 const proto = {
   /**
@@ -46,9 +43,9 @@ const proto = {
     // Calculate D-M
     if (dem) {
       curDoc[fieldName] = {
-        dif: roundTo(dif, 2),
-        dem: roundTo(dem, 2),
-        dMinusM: roundTo(dif - dem, 2)
+        dif: Queue.roundTo(dif, 4),
+        dem: Queue.roundTo(dem, 4),
+        dMinusM: Queue.roundTo(dif - dem, 4)
       };
     }
   }
@@ -94,8 +91,5 @@ function QueueMACD(param, /*optional*/preItems) {
 }
 
 Queue.extend(QueueMACD, proto);
-//QueueMACD.extend = Queue.extend;
-//QueueMACD.removeEmpty = Queue.removeEmpty;
-//QueueMACD.roundTo = Queue.roundTo;
 
 module.exports = QueueMACD;

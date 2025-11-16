@@ -1,7 +1,7 @@
 {
   "name": "finance-indicators",
   "version": "1.0.0",
-  "description": "",
+  "description": "A lightweight and extensible library for calculating finance technical indicators in Node.js. No external dependencies",
   "files": [
     "index.js"
   ],

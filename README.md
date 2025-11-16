@@ -130,3 +130,106 @@ indicator.get()
 Returns the latest calculated value of the indicator. Returns undefined if not enough data has been pushed to satisfy the period.
 indicator.getHistory()
 Returns an array of all calculated values.
+
+# classDiagram
+
+```mermaid
+classDiagram
+    class Indicator {
+        <<Prototype>>
+        +type: string
+        +timeRange: number
+        +preItems: array
+        +apply(context, args)
+        +extend(constructor, proto)
+    }
+
+    class Queue {
+        <<Object>>
+        +sma: QueueSMA
+        +ema: QueueEMA
+        +vma: QueueVMA
+        +rsi: QueueRSI
+        +kdj: QueueKDJ
+        +macd: QueueMACD
+        +bband: QueueBollinger
+        +divergence: QueueDivergence
+        +dmi: QueueDMI
+    }
+
+    class Track {
+        +timeRange: number
+        +enqueue(doc: object)
+    }
+
+    class QueueBase {
+        <<Abstract>>
+        +timeRange: number
+        +preItems: array
+        +enqueue(doc: object): object
+        +export(): array
+        +exportCache(): object
+    }
+    Indicator <|-- QueueBase
+
+    class QueueSMA {
+        +removeEmpty(result: array, key: string): array
+    }
+    QueueBase <|-- QueueSMA
+
+    class QueueEMA {}
+    QueueBase <|-- QueueEMA
+
+    class QueueVMA {}
+    QueueBase <|-- QueueVMA
+
+    class QueueRSI {}
+    QueueBase <|-- QueueRSI
+
+    class QueueKDJ {}
+    QueueBase <|-- QueueKDJ
+
+    class QueueMACD {}
+    QueueBase <|-- QueueMACD
+
+    class QueueBollinger {}
+    QueueBase <|-- QueueBollinger
+
+    class QueueDivergence {}
+    QueueBase <|-- QueueDivergence
+
+    class QueueDMI {}
+    QueueBase <|-- QueueDMI
+
+    class Module {
+        <<Entry Point>>
+        +createAll(timeRange, typeName, dataSet, preItems): object
+        +factory(type, timeRange, preItems): Indicator
+        +Track
+        +Queue
+    }
+
+    Module ..> Queue : uses
+    Module ..> Track : uses
+    Module ..> factory
+    Module ..> createAll
+
+    createAll ..> Queue : uses
+    createAll ..> Track : uses
+    factory ..> Indicator : creates
+
+    Queue --> QueueSMA : contains
+    Queue --> QueueEMA : contains
+    Queue --> QueueVMA : contains
+    Queue --> QueueRSI : contains
+    Queue --> QueueKDJ : contains
+    Queue --> QueueMACD : contains
+    Queue --> QueueBollinger : contains
+    Queue --> QueueDivergence : contains
+    Queue --> QueueDMI : contains
+
+    note for Indicator "The base prototype for all indicators, extended via a factory."
+    note for Queue "A map-like object holding references to all Queue implementations."
+    note for factory "A function that dynamically creates indicator instances based on type."
+    note for createAll "A utility function to process a whole dataset with a specific indicator."
+```

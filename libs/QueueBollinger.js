@@ -6,17 +6,17 @@ const N = 2;
 
 const proto = {
   /**
-   * @param {object} doc
-   * @param {number} doc.time
-   * @param {number} doc.close
+   * @param {Object} stick
+   * @param {number} stick.time
+   * @param {number} stick.close
    */
-  enqueue: function (doc) {
+  enqueue: function (stick) {
     let itemShifted;
 
-    if (this._validate(doc) === false) return console.log('Improper data:', doc);
+    if (this._validate(stick) === false) return console.log('Improper data:', stick);
 
-    this.queue.enqueue(doc);
-    this.items.push(doc);
+    this.queue.enqueue(stick);
+    this.items.push(stick);
 
     if (this.items.length > this.len) {
       itemShifted = this.items.shift();
@@ -31,19 +31,20 @@ const proto = {
 
   /**
    * Private method. To validate if doc is in proper format
-   * @param {number} doc.time
-   * @param {number} doc.close || doc.adjClose
+   * @param {Object} stick
+   * @param {number} stick.time
+   * @param {number} stick.close || doc.adjClose
    */
-  _validate: function (doc) {
-    if (!doc.time || typeof doc.time !== 'number') return false;
-    if (!doc[this.dataField] || typeof doc[this.dataField] !== 'number') return false;
+  _validate: function (stick) {
+    if (!stick.time || typeof stick.time !== 'number') return false;
+    if (!stick[this.dataField] || typeof stick[this.dataField] !== 'number') return false;
     return true;
   },
   // TODO: 完成signal後就不用客製fieldName
   _getFieldName: function () { return this.taType; },
 
   _calculate: function () {
-    const curDoc = this.items[this.items.length - 1];
+    const curStick = this.items[this.items.length - 1];
     let fieldName = this._getFieldName();
     let sma = this.queue.now();
 
@@ -54,12 +55,12 @@ const proto = {
     let high = sma + N * sd;
     let low = sma - N * sd;
 
-    curDoc[fieldName] = {
+    curStick[fieldName] = {
       sd: Queue.roundTo(sd, 2),
       high: Queue.roundTo(high, 2),
       low: Queue.roundTo(low, 2),
       // %b = (收盤價−布林帶下軌值) ÷ (布林帶上軌值−布林帶下軌值)
-      percentageB: (curDoc.close - low) / (high - low),
+      percentageB: (curStick.close - low) / (high - low),
       bandwidth: (high - low) / sma
     };
   },

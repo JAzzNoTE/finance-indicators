@@ -10,8 +10,8 @@ const emaSmoothing = QueueEMA.emaSmoothing;
 
 function calcuUD(items) {
   const len = items.length;
-  const preDoc = items[len - 2];
-  const preClose = preDoc.close || preDoc.adjClose;
+  const preStick = items[len - 2];
+  const preClose = preStick.close || preStick.adjClose;
   const dif = items[len - 1].close - preClose;
   let u, d;
 
@@ -53,27 +53,27 @@ const proto = {
    * Ⅱ. u, d → uWMA, dWMA (the first uWMA and dWMA needs the quantity 'timeRange' of u and d)
    * Ⅲ. uWMA, dWMA → rsi
    *
-   * @param {object} doc
-   * @param {number} doc.time
-   * @param {number} doc.close
-   * ! isStickFinished was created by ./trade/TimeStick, it might pass doc1m when timeScale == '5m', '30m', ...
-   * @param {boolean} isStickFinished - created by ./trade/TimeStick
+   * @param {Object} stick
+   * @param {number} stick.time
+   * @param {number} stick.close
+   * ! isStickFinished was created by ./trade/StickChannel, it might pass doc1m when timeScale == '5m', '30m', ...
+   * @param {boolean} [isStickFinished] - created by ./trade/StickChannel
    */
-  enqueue: function (doc, /*optional*/isStickFinished) {
+  enqueue: function (stick, isStickFinished) {
     let lastItem = this.items[this.items.length - 1];
-    if (this._validate(doc) === false) return console.log(this.taType, '| Improper data:', doc);
+    if (this._validate(stick) === false) return console.log(this.taType, '| Improper data:', stick);
 
     if (this.items.length == 0) {
       if (isStickFinished !== undefined && isStickFinished == false) return;
 
-      this.queueFirstRSI.push(doc);
+      this.queueFirstRSI.push(stick);
       return this._calcuFirstRSI();
     }
 
     //! Replace the last doc to calculate a temperary result
-    if (isStickFinished !== undefined && doc.timeTag == lastItem.timeTag) this._replaceFinal(doc);
+    if (isStickFinished !== undefined && stick.timeTag == lastItem.timeTag) this._replaceFinal(stick);
     // NOTICE: this.items would be empty until first RSI appears
-    else this.items.push(doc);
+    else this.items.push(stick);
 
     // NOTICE: only need two items in queue
     if (this.items.length > 2) {
@@ -89,37 +89,38 @@ const proto = {
 
   _calcuFirstRSI: function () {
     const len = this.queueFirstRSI.length;
-    const curDoc = this.queueFirstRSI[len - 1];
+    const curStick = this.queueFirstRSI[len - 1];
     const fieldName = this._getFieldName();
     let u, d, dataSetSub;
 
     if (len <= 1) return;
 
     [u, d] = calcuUD(this.queueFirstRSI);
-    curDoc[fieldName + '_u'] = u;
-    curDoc[fieldName + '_d'] = d;
+    curStick[fieldName + '_u'] = u;
+    curStick[fieldName + '_d'] = d;
 
     if (len >= this.len + 1) {
       // Remove first doc because there is no 'u' & 'd' existed
       this.queueFirstRSI.shift();
 
       dataSetSub = this.queueFirstRSI.splice(len - this.len, this.len);
-      curDoc[fieldName] = getFirstRSI(fieldName, dataSetSub);
+      curStick[fieldName] = getFirstRSI(fieldName, dataSetSub);
 
-      this.items.push(curDoc);
+      this.items.push(curStick);
 
       delete this.queueFirstRSI;
     }
   },
 
   /**
-   * Private method. To validate if doc is in proper format
-   * @param {number} doc.time
-   * @param {number} doc.close || doc.adjClose
+   * Private method. To validate if stick is in proper format
+   * @param {Object} stick
+   * @param {number} stick.time
+   * @param {number} stick.close || stick.adjClose
    */
-  _validate: function (doc) {
-    if (!doc.time || typeof doc.time !== 'number') return false;
-    if (!doc[this.dataField] || typeof doc[this.dataField] !== 'number') return false;
+  _validate: function (stick) {
+    if (!stick.time || typeof stick.time !== 'number') return false;
+    if (!stick[this.dataField] || typeof stick[this.dataField] !== 'number') return false;
     return true;
   },
 

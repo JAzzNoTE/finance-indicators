@@ -3,16 +3,16 @@ const QueueEMA = require('./QueueEMA.js');
 
 const proto = {
   /**
-   * @param {object} doc
-   * @param {number} doc.time
-   * @param {number} doc.high
-   * @param {number} doc.low
-   * @param {number} doc.close
+   * @param {Object} stick
+   * @param {number} stick.time
+   * @param {number} stick.high
+   * @param {number} stick.low
+   * @param {number} stick.close
    */
-  enqueue: function (doc) {
+  enqueue: function (stick) {
     let itemShifted;
 
-    this.items.push(doc);
+    this.items.push(stick);
 
     if (this.items.length > this.len) {
       itemShifted = this.items.shift();
@@ -28,20 +28,20 @@ const proto = {
   _calculate: function () {
     if (this.items.length < 2) return;
 
-    const curDoc = this.items[this.len - 1];
-    const preDoc = this.items[this.len - 2];
+    const curStick = this.items[this.len - 1];
+    const preStick = this.items[this.len - 2];
 
-    const difH = doc.High - preDoc.High;
-    const difL = -(doc.Low - preDoc.Low);
+    const difH = doc.High - preStick.High;
+    const difL = -(doc.Low - preStick.Low);
     const dmPlus = (difH > difL && difH > 0) ? difH : 0;
     const dmMinus = (difH < difL && difH > 0) ? difL : 0;
-    const tr = Math.max(doc.High, preDoc.close) - Math.min(doc.Low, preDoc.close);
+    const tr = Math.max(doc.High, preStick.close) - Math.min(doc.Low, preStick.close);
     let dmPlus_smooth, dmMinus_smooth, tr_smooth, adx_smooth;
     let diPlus, diMinus, dx;
 
-    this.queueDMPlus.enqueue({ time: curDoc.time, close: dmPlus });
-    this.queueDMMinus.enqueue({ time: curDoc.time, close: dmMinus });
-    this.queueTR.enqueue({ time: curDoc.time, close: tr });
+    this.queueDMPlus.enqueue({ time: curStick.time, close: dmPlus });
+    this.queueDMMinus.enqueue({ time: curStick.time, close: dmMinus });
+    this.queueTR.enqueue({ time: curStick.time, close: tr });
 
     dmPlus_smooth = this.queueDMPlus.now();
     dmMinus_smooth = this.queueDMMinus.now();
@@ -53,10 +53,10 @@ const proto = {
       dx = Math.abs(diPlus - diMinus) / (diPlus + diMinus);
     }
 
-    this.queueADX.enqueue({ time: curDoc.time, close: dx });
+    this.queueADX.enqueue({ time: curStick.time, close: dx });
     adx_smooth = this.queueADX.now();
 
-    curDoc[this._getFieldName()] = { diPlus, diMinus, adx: adx_smooth };
+    curStick[this._getFieldName()] = { diPlus, diMinus, adx: adx_smooth };
   }
 };
 

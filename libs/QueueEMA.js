@@ -8,12 +8,12 @@ const mean_arithmetic = util.mean_arithmetic;
 // see https://fxcodebase.com/wiki/index.php/%E6%8C%87%E6%95%B8%E5%8A%A0%E6%AC%8A%E7%A7%BB%E5%8B%95%E5%B9%B3%E5%9D%87%E7%B7%9A_(EMA)
 function calcuFirstEMA(queue, timeRange) {
   let len = queue.length;
-  let doc;
+  let stick;
 
   if (len == timeRange) {
-    doc = queue[len - 1];
-    doc['ema' + timeRange] = roundTo(mean_arithmetic(queue, 'close'), 2);
-    return doc;
+    stick = queue[len - 1];
+    stick['ema' + timeRange] = Queue.roundTo(mean_arithmetic(queue, 'close'), 2);
+    return stick;
   } else if (len > timeRange) {
     throw new Error(`calcuFirstEMA | The length of queue ${len} is bigger than timeRange ${timeRange}`);
   }
@@ -27,11 +27,11 @@ function emaSmoothing(price, preEMA, interval) {
   return preEMA + alpha * (price - preEMA);
 }
 
-var proto = {
+const proto = {
   _calculate: function () {
     const fieldName = this._getFieldName();
     const len = this.items.length;
-    let preEMA, curDoc;
+    let preEMA, curStick;
 
     if (len < this.len) return;
 
@@ -39,9 +39,9 @@ var proto = {
     if (!preEMA) {
       return this.items[len - 1] = calcuFirstEMA(this.items, this.len);
     } else {
-      curDoc = this.items[len - 1];
+      curStick = this.items[len - 1];
       // Directly attach properties on doc
-      curDoc[fieldName] = roundTo(emaSmoothing(curDoc.close, preEMA, this.len), 2);
+      curStick[fieldName] = Queue.roundTo(emaSmoothing(curStick.close, preEMA, this.len), 2);
     }
   }
 };
@@ -62,9 +62,6 @@ function QueueEMA(length, /*optional*/preItems) {
 }
 
 Queue.extend(QueueEMA, proto);
-QueueEMA.extend = Queue.extend;
-QueueEMA.removeEmpty = Queue.removeEmpty;
-QueueEMA.roundTo = Queue.roundTo;
 
 // For RSI, MACD
 QueueEMA.calcuFirstEMA = calcuFirstEMA;

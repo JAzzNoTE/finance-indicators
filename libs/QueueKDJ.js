@@ -9,15 +9,15 @@ var proto = {
     const high = this.items.reduce((pre, cur) => Math.max(pre, cur['high']), 0);
     const low = this.items.reduce((pre, cur) => Math.min((typeof pre === 'number') ? pre : pre['low'], cur['low']));
     const close = this.items[this.len - 1]['close'];
-    const preDoc = this.items[this.len - 2];
+    const preStick = this.items[this.len - 2];
     const fieldName = this._getFieldName();
 
     const RSV = ((close - low) / (high - low)) * 100;
     let K, D, J, KmD;
 
-    if (preDoc?.[fieldName]) {
-      K = ALPHA * RSV + (1 - ALPHA) * preDoc[fieldName].K;
-      D = ALPHA * K + (1 - ALPHA) * preDoc[fieldName].D;
+    if (preStick?.[fieldName]) {
+      K = ALPHA * RSV + (1 - ALPHA) * preStick[fieldName].K;
+      D = ALPHA * K + (1 - ALPHA) * preStick[fieldName].D;
     } else {
       // Calcu the first value
       K = ALPHA * RSV + (1 - ALPHA) * 50;

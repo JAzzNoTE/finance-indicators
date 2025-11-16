@@ -4,11 +4,12 @@ const Queue = require('./Queue.js');
 const proto = {
   /**
    * Private method. To validate if doc is in proper format
-   * @param {number} doc.time
-   * @param {number} doc.close
+   * @param {Object} stick
+   * @param {number} stick.time
+   * @param {number} stick.close
    */
-  _validate: function (doc) {
-    return this.dataField.every(fieldName => (!doc[fieldName] || typeof doc[fieldName] !== 'number') ? false : true);
+  _validate: function (stick) {
+    return this.dataField.every(fieldName => (!stick[fieldName] || typeof stick[fieldName] !== 'number') ? false : true);
   },
 
   _getFieldName: function () { return this.taType; },
@@ -46,6 +47,13 @@ const proto = {
     return itemShifted;
   },
 
+  /**
+   * Private method. When a new extreme value (max or min) is found,
+   * this function iterates through the previous items in the queue and
+   * renames the old extreme value property to mark it as a 'past' value.
+   * For example, `maxClose` becomes `past_maxClose`.
+   * @param {string} name The property name to be renamed (e.g., 'maxClose' or 'minClose').
+   */
   _replacePast: function (name) {
     let fieldName = this._getFieldName();
     // NOTICE: Keep the last value, so i < this.len - 1, not i <= this.len - 1

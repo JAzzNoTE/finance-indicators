@@ -89,7 +89,14 @@ const proto = {
   dmi: {}
 };
 
-// Track因其滯後性，行為有些不同，故不併入factory生成
+/**
+ * Factory to create an indicator instance
+ * ! Track因其滯後性，行為有些不同，無法併入factory生成
+ * @param {string} type - The type of indicator to create ('sma', 'ema', 'vma', 'kdj', 'rsi', 'macd', 'bband', 'dmi').
+ * @param {number} timeRange - The time period for the indicator calculation.
+ * @param {Array} [preItems] - Optional. An array of previous data items to initialize the indicator.
+ * @returns {Indicator} A new instance of the specified indicator type.
+ */
 function factory(type, timeRange, preItems) {
   function Constructor(timeRange, preItems) {
     this.type = type;

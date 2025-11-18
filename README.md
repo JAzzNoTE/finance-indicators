@@ -172,9 +172,7 @@ classDiagram
     }
     Indicator <|-- QueueBase
 
-    class QueueSMA {
-        +removeEmpty(result: array, key: string): array
-    }
+    class QueueSMA {}
     QueueBase <|-- QueueSMA
 
     class QueueEMA {}
@@ -229,7 +227,9 @@ classDiagram
     Queue --> QueueDMI : contains
 
     note for Indicator "The base prototype for all indicators, extended via a factory."
-    note for Queue "A map-like object holding references to all Queue implementations."
+    note for Queue "A map-like object holding references to all Queue implementations.
+    Users could assamble this to create their own customed indicator."
     note for factory "A function that dynamically creates indicator instances based on type."
-    note for createAll "A utility function to process a whole dataset with a specific indicator."
+    note for createAll "A utility function to process a whole dataset 
+    with a specific indicator."
 ```
